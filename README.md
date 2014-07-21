@@ -9,7 +9,7 @@ There are 3 kinds of hooks:
 * ViewHook: App-Hooks will be able to add Forms in your views.
 * SignalHook: This is the same as django signals except that *signal-hooks* don't need to be pre-created. You can connect or emit a signal by its name/id.
 
-**Tested** in Django 1.4, 1.5, 1.6; Python 2.7..
+**Tested** in Django 1.4, 1.5, 1.6; Python 2.7, 3.4
 
 ## Configuration
 
