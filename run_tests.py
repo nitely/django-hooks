@@ -5,7 +5,10 @@ import sys
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'settings_test_runner'
 
-from django.test.runner import DiscoverRunner
+try:
+    from django.test.runner import DiscoverRunner
+except ImportError:
+    from discover_runner import DiscoverRunner
 
 
 def run_tests():

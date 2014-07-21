@@ -9,7 +9,8 @@ env:
   - DJANGO=1.6
 install:
   - pip install -q Django==$DJANGO --use-mirrors
-  - pip install -q mock>=1.0,<1.1
+  - pip install -q django-discover-runner
+  - pip install -q mock>=1.0,<1.1 --use-mirrors
   - pip install coveralls
 script:
   - coverage run --source=. run_tests.py
