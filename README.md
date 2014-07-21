@@ -1,4 +1,4 @@
-# django-hooks
+# django-hooks[![Build Status](https://travis-ci.org/nitely/django-hooks.png)](https://travis-ci.org/nitely/django-hooks) [![Coverage Status](https://coveralls.io/repos/nitely/django-hooks/badge.png?branch=master)](https://coveralls.io/r/nitely/django-hooks?branch=master)
 
 A plugin system for django apps. It provides ways for an app to inject code into another app.
 So you can integrate existing apps into your main app. I call this existing app an *App-Hook*.
@@ -8,6 +8,12 @@ There are 3 kinds of hooks:
 * TemplateHook: the most useful one, App-Hooks will be able to inject their own code into your templates.
 * ViewHook: App-Hooks will be able to add Forms in your views.
 * SignalHook: This is the same as django signals except that *signal-hooks* don't need to be pre-created. You can connect or emit a signal by its name/id.
+
+**Tested** in Django 1.6; Python 2.7.
+
+## Configuration
+
+1. Add `hooks` to your *INSTALLED_APPS*. This is required only if you are going to use the templatetags.
 
 ## Learn by example
 
