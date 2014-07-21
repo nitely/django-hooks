@@ -5,7 +5,7 @@ from django.template import Template, Context
 
 from hooks.templatehook import hook
 from hooks.templatetags.hooks_tags import template_hook_collect
-import utils_hooks
+from . import utils_hooks
 
 
 class HookTagTest(TestCase):
