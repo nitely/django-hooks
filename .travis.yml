@@ -17,8 +17,7 @@ matrix:
       env: DJANGO=1.5
 install:
   - pip install -q Django==$DJANGO --use-mirrors
-  - pip install -q django-discover-runner
-  - pip install -q mock>=1.0,<1.1 --use-mirrors
+  - pip install -q django-discover-runner --use-mirrors
   - pip install coveralls
 script:
   - coverage run --source=. run_tests.py
