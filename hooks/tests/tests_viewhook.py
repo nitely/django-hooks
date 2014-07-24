@@ -97,6 +97,10 @@ class HookProxyTest(TestCase):
         self.assertFalse(proxy.is_valid())
         hook_a.is_valid.assert_called_once_with()
         hook_b.is_valid.assert_called_once_with()
+        
+        # if there are no hooks registered, should be valid
+        proxy2 = HookProxy([])
+        self.assertTrue(proxy2.is_valid())
 
 
 class HookTest(TestCase):
