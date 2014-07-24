@@ -95,14 +95,8 @@ class HookProxy(object):
             hook.post(*args, **kwargs)
 
     def is_valid(self):
-        is_valid = True
-
         # Validate all so errors are attached
-        for hook in self._hooks:
-            if not hook.is_valid():
-                is_valid = False
-
-        return is_valid
+        return all([hook.is_valid() for hook in self._hooks])
 
     def save(self, *args, **kwargs):
         for hook in self._hooks:
