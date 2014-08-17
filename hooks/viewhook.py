@@ -102,6 +102,15 @@ class HookProxy(object):
         for hook in self._hooks:
             hook.save(*args, **kwargs)
 
+    @property
+    def context(self):
+        context = {}
+
+        for hook in self._hooks:
+            context.update(hook.context)
+
+        return context
+
 
 class Hook(object):
 

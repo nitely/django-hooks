@@ -97,10 +97,19 @@ class HookProxyTest(TestCase):
         self.assertFalse(proxy.is_valid())
         hook_a.is_valid.assert_called_once_with()
         hook_b.is_valid.assert_called_once_with()
-        
+
         # if there are no hooks registered, should be valid
         proxy2 = HookProxy([])
         self.assertTrue(proxy2.is_valid())
+
+    def test_context(self):
+        hook_a = mock.MagicMock()
+        hook_b = mock.MagicMock()
+        hook_a.context = {"hook_a": "foo", }
+        hook_b.context = {"hook_b": "foo", }
+        proxy = HookProxy([])
+        proxy._hooks = [hook_a, hook_b]
+        self.assertDictEqual(proxy.context, {"hook_a": "foo", "hook_b": "foo"})
 
 
 class HookTest(TestCase):
