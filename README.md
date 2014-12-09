@@ -14,7 +14,9 @@ There are 3 kinds of hooks:
 ## Possible scenario
 
 Let's say we want to render contextual information beside a record allocated in main_app. This extra information can be provided by some third party application: Notes, Attachments, Comments, Followers, ...
+
 Adding an `{% include %}` tag to our `record.html` is not possible cause we don't know what to render beforehand (a note? a list of comments?) or even if any of those applications is installed for our case/customer/project.
+
 We can create a TemplateHook `{% hook 'contextual_info' %}` where we delegate the rendering and content retrieval to the hooked app(s). By doing so, `record.html` doesn't need to be touched anymore, no need to add more templatetags to `{% load %}` and we also we do not overcharge our templates to be easily reused.
 
 ## Configuration
