@@ -78,7 +78,7 @@ hook.register("within_head", css_resources)
 > 
 > urls.py is a good place (django<=1.6)
 > 
-> or do it in the AppConfig.ready() method (django>=1.7)
+> or do it in the AppConfig.ready() method (django>=1.7). Read helpfull article http://chriskief.com/2014/02/28/django-1-7-signals-appconfig/
 
 ### ViewHook
 
