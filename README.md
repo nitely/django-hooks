@@ -1,7 +1,7 @@
 # django-hooks[![Build Status](https://travis-ci.org/nitely/django-hooks.png)](https://travis-ci.org/nitely/django-hooks) [![Coverage Status](https://coveralls.io/repos/nitely/django-hooks/badge.png?branch=master)](https://coveralls.io/r/nitely/django-hooks?branch=master)
 
-A plugin system for django apps. It provides ways for an app to inject code into another app.
-So you can integrate existing apps into your main app. I call this existing app an *App-Hook*.
+A plugin system for django apps. It provides ways for an app (called from here *App-Hook*) to inject code into another app.
+So you can integrate existing or third party apps into main app.
 
 There are 3 kinds of hooks:
 
@@ -9,7 +9,7 @@ There are 3 kinds of hooks:
 * ViewHook: App-Hooks will be able to add Forms in your views.
 * SignalHook: This is the same as django signals except that *signal-hooks* don't need to be pre-created. You can connect or emit a signal by its name/id.
 
-**Tested** in Django 1.4, 1.5, 1.6; Python 2.7, 3.4
+**Tested** in Django 1.4, 1.5, 1.6, 1.7; Python 2.7, 3.4
 
 ## Configuration
 
@@ -188,7 +188,7 @@ signalhook.hook.send("another-signal")
 ```
 
 > **Note**
-> SignalHook uses django signals under the hook, so you can do pretty much the same.
+> SignalHook uses django signals under the hood, so you can do pretty much the same.
 
 ### Miscellaneous
 
