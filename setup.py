@@ -11,7 +11,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='django-hooks',
-    version='0.1.1',
+    version='0.1.2',
     description='A plugin system for django.',
     author='Esteban Castro Borsani',
     author_email='ecastroborsani@gmail.com',
@@ -19,6 +19,7 @@ setup(
     url='https://github.com/nitely/django-hooks',
     packages=[
         'hooks',
+        'hooks.templatetags',
     ],
     include_package_data=True,
     zip_safe=False,
