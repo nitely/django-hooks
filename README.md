@@ -1,7 +1,7 @@
 # django-hooks[![Build Status](https://travis-ci.org/nitely/django-hooks.png)](https://travis-ci.org/nitely/django-hooks) [![Coverage Status](https://coveralls.io/repos/nitely/django-hooks/badge.png?branch=master)](https://coveralls.io/r/nitely/django-hooks?branch=master)
 
-A plugin system for django apps. It provides ways for an app to inject code into another app.
-So you can integrate existing apps into your main app. I call this existing app an *App-Hook*.
+A plugin system for django apps. It provides ways for an app (called from here *App-Hook*) to inject code into another app.
+So you can integrate existing or third party apps into main app.
 
 There are 3 kinds of hooks:
 
@@ -9,7 +9,15 @@ There are 3 kinds of hooks:
 * ViewHook: App-Hooks will be able to add Forms in your views.
 * SignalHook: This is the same as django signals except that *signal-hooks* don't need to be pre-created. You can connect or emit a signal by its name/id.
 
-**Tested** in Django 1.4, 1.5, 1.6; Python 2.7, 3.4
+**Tested** in Django 1.4, 1.5, 1.6, 1.7; Python 2.7, 3.4
+
+## Possible scenario
+
+Let's say we want to render contextual information beside a record allocated in main_app. This extra information can be provided by some third party application: Notes, Attachments, Comments, Followers, ...
+
+Adding an `{% include %}` tag to our `record.html` is not possible cause we don't know what to render beforehand (a note? a list of comments?) or even if any of those applications is installed for our case/customer/project.
+
+We can create a TemplateHook `{% hook 'contextual_info' %}` where we delegate the rendering and content retrieval to the hooked app(s). By doing so, `record.html` doesn't need to be touched anymore, no need to add more templatetags to `{% load %}` and we also we do not overcharge our templates to be easily reused.
 
 ## Configuration
 
@@ -78,7 +86,7 @@ hook.register("within_head", css_resources)
 > 
 > urls.py is a good place (django<=1.6)
 > 
-> or do it in the AppConfig.ready() method (django>=1.7)
+> or do it in the AppConfig.ready() method (django>=1.7). Read helpfull article http://chriskief.com/2014/02/28/django-1-7-signals-appconfig/
 
 ### ViewHook
 
@@ -188,7 +196,7 @@ signalhook.hook.send("another-signal")
 ```
 
 > **Note**
-> SignalHook uses django signals under the hook, so you can do pretty much the same.
+> SignalHook uses django signals under the hood, so you can do pretty much the same.
 
 ### Miscellaneous
 

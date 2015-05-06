@@ -19,6 +19,7 @@ setup(
     url='https://github.com/nitely/django-hooks',
     packages=[
         'hooks',
+        'hooks.templatetags',
     ],
     include_package_data=True,
     zip_safe=False,
