@@ -1,35 +1,5 @@
 #-*- coding: utf-8 -*-
 
-"""
-API example
-
-# app/hooks.py
-myview = Hook()
-
-# app/views.py
-def myview(request):
-    ...
-    hook = hooks.myview(request)
-    hook.dispatch()
-
-    if is_post:
-        ...
-        hook.post()
-
-        if hook.is_valid() and ...:
-            ...
-            hook.save()
-            redirect('/')
-    else:
-        ...
-        hook.get()
-
-    context = {'foo': foobar, }
-    context.update(hook.context)
-
-    return response(context)
-"""
-
 __all__ = ["Hook", "HookBase"]
 
 
