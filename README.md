@@ -54,14 +54,27 @@ Creating a hook-listener in a third-party app:
 # third_party_app/templatehooks.py
 
 from django.template.loader import render_to_string
+from django.utils.html import mark_safe, format_html
 
 
 def css_resources(context, *args, **kwargs):
-    return u'<link rel="stylesheet" href="%s/app_hook/styles.css">' % settings.STATIC_URL
+    return mark_safe(u'<link rel="stylesheet" href="%s/app_hook/styles.css">' % settings.STATIC_URL)
+
+
+def user_about_info(context, *args, **kwargs):
+    user = context['request'].user
+    return format_html(
+        "<b>{name}</b> {last_name}: {about}",
+        name=user.first_name,
+        last_name=user.last_name,
+        about=mark_safe(user.profile.about_html)
+    )
+
 
 def a_more_complex_hook(context, *args, **kwargs):
     # If you are doing this a lot, make sure to keep your templates in memory (google: django.template.loaders.cached.Loader)
     return render_to_string('templates/app_hook/head_resources.html', context_instance=context)
+
 
 def an_even_more_complex_hook(context, *args, **kwargs):
     articles = Article.objects.all()
