@@ -1,6 +1,9 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
 
 from django import template
+from django.utils.html import format_html_join
 
 from hooks.templatehook import hook
 
@@ -10,7 +13,8 @@ register = template.Library()
 
 @register.simple_tag(name="hook", takes_context=True)
 def hook_tag(context, name, *args, **kwargs):
-    return u"\n".join(hook(name, context, *args, **kwargs))
+    responses = ((response, ) for response in hook(name, context, *args, **kwargs))
+    return format_html_join("\n", "{}", responses)
 
 
 def template_hook_collect(module, hook_name, *args, **kwargs):
@@ -28,7 +32,7 @@ def template_hook_collect(module, hook_name, *args, **kwargs):
     try:
         templatehook = getattr(module, hook_name)
     except AttributeError:
-        return u""
+        return ""
 
-    responses = templatehook(*args, **kwargs)
-    return u"\n".join(responses)
+    responses = ((response, ) for response in templatehook(*args, **kwargs))
+    return format_html_join("\n", "{}", responses)

@@ -3,18 +3,12 @@ python:
   - "2.7"
   - "3.4"
 env:
-  - DJANGO=1.4
-  - DJANGO=1.5
-  - DJANGO=1.6
-matrix:
-  exclude:
-    - python: "3.4"
-      env: DJANGO=1.4
-    - python: "3.4"
-      env: DJANGO=1.5
+  - DJANGO=1.7
+  - DJANGO=1.8
 install:
   - pip install -q Django==$DJANGO --use-mirrors
   - pip install -q django-discover-runner --use-mirrors
+  - pip install -q mock --use-mirrors
   - pip install coveralls
 script:
   - coverage run --source=. run_tests.py

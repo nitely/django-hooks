@@ -35,12 +35,18 @@ class TemplateHook(object):
     def unregister(self, func):
         """
         Unregister a previously registered callback.
-        @hook: a func reference (callback).
+        @func: a func reference (callback).
         """
         try:
             self._registry.remove(func)
         except ValueError:
             pass
+
+    def unregister_all(self):
+        """
+        Unregister all callbacks.
+        """
+        del self._registry[:]
 
 
 class Hook(object):
@@ -93,6 +99,18 @@ class Hook(object):
             return
 
         templatehook.unregister(func)
+
+    def unregister_all(self, name):
+        """
+        Unregister all callbacks.
+        @name: hook name.
+        """
+        try:
+            templatehook = self._registry[name]
+        except KeyError:
+            return
+
+        templatehook.unregister_all()
 
 
 hook = Hook()
