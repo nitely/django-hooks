@@ -57,25 +57,29 @@ from django.template.loader import render_to_string
 from django.utils.html import mark_safe, format_html
 
 
+# Example 1
 def css_resources(context, *args, **kwargs):
     return mark_safe(u'<link rel="stylesheet" href="%s/app_hook/styles.css">' % settings.STATIC_URL)
 
 
+# Example 2
 def user_about_info(context, *args, **kwargs):
     user = context['request'].user
     return format_html(
         "<b>{name}</b> {last_name}: {about}",
         name=user.first_name,
         last_name=user.last_name,
-        about=mark_safe(user.profile.about_html)
+        about=mark_safe(user.profile.about_html_field)  # Some safe (sanitized) html data.
     )
 
 
+# Example 3
 def a_more_complex_hook(context, *args, **kwargs):
     # If you are doing this a lot, make sure to keep your templates in memory (google: django.template.loaders.cached.Loader)
     return render_to_string('templates/app_hook/head_resources.html', context_instance=context)
 
 
+# Example 4
 def an_even_more_complex_hook(context, *args, **kwargs):
     articles = Article.objects.all()
     return render_to_string('templates/app_hook/my_articles.html', {'articles': articles, }, context_instance=context)
@@ -119,27 +123,28 @@ Adding a hook-point to the main app view:
 
 from main_app import viewhooks
 
+
 def myview(request):
-    #...
+    # ...
     hook = hooks.myview(request)
     hook.dispatch()
 
     if is_post:
-        #...
+        # ...
         hook.post()
 
-        if hook.is_valid():
-            #...
+        if all([hook.is_valid(), other.is_valid()]):  # Avoid short-circuit evaluation (and)
+            # ...
             hook.save()
             redirect('/')
     else:
-        #...
+        # ...
         hook.get()
 
     context = {'foo': foobar, }
     context.update(hook.context)
 
-    return response(context) #...
+    return response(context)  # ...
 ```
 
 > Go to the Miscellaneous section for a real life example.
@@ -184,6 +189,12 @@ viewhooks.myview.register(MyHook)
 
 ### SignalHook
 
+> Best practices:
+> * Always *document* the signals the app will send, include the parameters the receiver should handle.
+> * Send signals from views, only.
+> * Avoid sending signals from plugins.
+> * Try to avoid signal-hell in general. It's better to be *explicit* and call the functions that would've handle the signal otherwise. Of course, this won't be possible when there are plugins involved.
+
 Connecting a hook-listener:
 
 ```python
@@ -202,8 +213,8 @@ Sending a signal:
 
 from hooks import signalhook
 
-signalhook.hook.send("my-signal", myarg="hello")
-signalhook.hook.send("another-signal")
+responses = signalhook.hook.send("my-signal", arg_one="hello", arg_two="world")
+responses = signalhook.hook.send("another-signal")
 ```
 
 > SignalHook uses django signals under the hood, so you can do pretty much the same things.
@@ -211,7 +222,7 @@ signalhook.hook.send("another-signal")
 ### Miscellaneous: TemplateHook
 
 As you saw earlier *TemplateHooks* don't need to be pre-created, passing `within_head` to the hook-point will call any listener previously registered to that name/id.
-But, what if you want to have static/pre-created hook-point... you can! but it requires you to create an extra template tag.
+But, what if you want to have a static/pre-created hook-point... you can! but it requires an extra template tag.
 Let's create a static hook-point:
 
 ```python
@@ -226,11 +237,11 @@ Creating a template-tag that will call the `within_head` from the `templatehooks
 ```python
 # main_app/templatetags/hook.py
 from hooks.templatetags import template_hook_collect
-from main_app import templatehooks
+from main_app import templatehooks  # module containing the hook-points
 
 @register.simple_tag(takes_context=True)
 def hook(context, name, *args, **kwargs):
-    return template_hook_collect(hooks, name, context, *args, **kwargs)
+    return template_hook_collect(templatehooks, name, context, *args, **kwargs)
 ```
 
 In the main app template:
@@ -278,7 +289,7 @@ def myview(request, article_id):
         form = UserForm(data=request.POST)
         hook.post(article)
 
-        if form.is_valid() and hook.is_valid():
+        if all([form.is_valid(), hook.is_valid()]):  # Avoid short-circuit evaluation (and)
             user = form.save()
             hook.save(user)
             redirect('/')
