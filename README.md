@@ -5,11 +5,12 @@ A modular plugin system for django apps.
 There are 3 kinds of hooks:
 
 * TemplateHook: Third-party apps will be able to insert their own code (text/html) into an app template.
-* ViewHook: Third-party apps will be able to insert Forms in an app view.
+* FormHook: Third-party apps will be able to insert Forms in an app view.
+* ViewHook: This is deprecated in favor of `FormHook`
 * SignalHook: Connect or emit a signal by its name/id. This is the same as Django signals
 except that they don't need to be pre-defined.
 
-**Tested** in Django 1.7, 1.8 LTS; Python 2.7, 3.4, 3.5
+**Tested** in Django 1.8 LTS; Python 2.7, 3.4, 3.5
 
 ## Why?
 
@@ -120,84 +121,9 @@ hook.register("within_head", css_resources)
 
 ### ViewHook
 
-Creating a hook-point:
-
-```python
-# main_app/viewhooks.py
-
-from hooks.viewhook import Hook
-
-myview = Hook()
-```
-
-Adding a hook-point to the main app view:
-
-```python
-# main_app/views.py
-
-from main_app import viewhooks
-
-
-def myview(request):
-    # ...
-    hook = hooks.myview(request)
-    hook.dispatch()
-
-    if is_post:
-        # ...
-        hook.post()
-
-        if all([hook.is_valid(), other.is_valid()]):  # Avoid short-circuit evaluation (and)
-            # ...
-            hook.save()
-            redirect('/')
-    else:
-        # ...
-        hook.get()
-
-    context = {'foo': foobar, }
-    context.update(hook.context)
-
-    return response(context)  # ...
-```
-
-Creating a hook-listener in a third-party app:
-
-```python
-# third_party_app/viewhooks.py
-
-from hooks.viewhook import HookBase
-
-
-class MyHook(HookBase):
-    def dispatch(*args, **kwargs):
-        # do something useful
-    
-    def post(*args, **kwargs):
-        form = MyForm(data=self.request.POST)
-        self.context['myhookform'] = form
-    
-    def is_valid():
-        return self.context['myhookform'].is_valid()
-    
-    def save(*args, **kwargs):
-        self.context['myhookform'].save()
-    
-    def get(*args, **kwargs):
-        form = MyForm()
-        self.context['myhookform'] = form
-```
-
-Registering a hook-listener:
-
-```python
-# third_party_app/urls.py
-
-from third_party_app.viewhooks import MyHook
-from main_app import viewhooks
-
-viewhooks.myview.register(MyHook)
-```
+> Warning!
+>
+> This hook is deprecated in favor of `FormHook` as it solves the same issue in a more saner way.
 
 ### SignalHook
 

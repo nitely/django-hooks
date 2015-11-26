@@ -1,6 +1,14 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
+from . import deprecations
+
 
 __all__ = ["Hook", "HookBase"]
+
+
+deprecations.warn("viewhook is deprecated in favor of formhook")
 
 
 class HookBase(object):
