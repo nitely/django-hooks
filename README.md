@@ -170,7 +170,7 @@ def user_profile_update(request):
         user_form = UserForm(data=request.POST, instance=request.user)
 
         # Hook listeners will receive the user and populate the
-        # initial data (or instance if a FormModel is used) accordingly,
+        # initial data (or instance if a ModelForm is used) accordingly,
         # or maybe even query the data base.
         hook = formhooks.UserFormHook(user=request.user, data=request.POST)
 
@@ -224,7 +224,7 @@ from third_party_app.models import MyUserExtension
 class MyUserExtensionForm(forms.ModelForm):
 
     class Meta:
-        model = User
+        model = MyUserExtension
         fields = ("gender", "age", "about")
 
     def __init__(user=None, *args, **kwargs):
@@ -235,6 +235,15 @@ class MyUserExtensionForm(forms.ModelForm):
 
         kwargs['instance'] = instance
         super(MyUserExtensionForm, self).__init__(*args, **kwargs)
+
+    def save(new_user, *args, **kwargs):
+        self.instance.user = new_user
+        super(MyUserExtensionForm, self).save(*args, **kwargs)
+
+
+class MyRegularForm(forms.Form):
+    """"""
+    # ...
 ```
 
 Registering a hook-listener:
@@ -252,9 +261,9 @@ class MyAppConfig(AppConfig):
 
     def ready(self):
         from main_app.formhooks import MyFormHook, UserFormHook
-        from third_party_app.forms import MyForm, MyUserExtensionForm
+        from third_party_app.forms import MyRegularForm, MyUserExtensionForm
 
-        MyFormHook.register(MyForm)
+        MyFormHook.register(MyRegularForm)
         UserFormHook.register(MyUserExtensionForm)
 ```
 
