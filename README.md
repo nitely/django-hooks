@@ -6,7 +6,7 @@ There are 3 kinds of hooks:
 
 * TemplateHook: Third-party apps will be able to insert their own code (text/html) into an app template.
 * FormHook: Third-party apps will be able to insert Forms in an app view.
-* ViewHook: This is deprecated in favor of `FormHook`
+* ~~ViewHook~~: This is deprecated in favor of `FormHook`
 * SignalHook: Connect or emit a signal by its name/id. This is the same as Django signals
 except that they don't need to be pre-defined.
 
@@ -103,14 +103,21 @@ def an_even_more_complex_hook(context, *args, **kwargs):
 Registering a hook listener in a `third_party_app`:
 
 ```python
-# third_party_app/urls.py
+# third_party_app/apps.py
 
-from hooks.templatehook import hook
-
-from third_party_app.template_hooks import css_resources
+from django.apps import AppConfig
 
 
-hook.register("within_head", css_resources)
+class MyAppConfig(AppConfig):
+
+    name = 'myapp'
+    verbose_name = 'My App'
+
+    def ready(self):
+        from hooks.templatehook import hook
+        from third_party_app.template_hooks import css_resources
+
+        hook.register("within_head", css_resources)
 ```
 
 > Where to register your hooks:
@@ -119,7 +126,139 @@ hook.register("within_head", css_resources)
 > [docs](https://docs.djangoproject.com/en/1.8/ref/applications/#django.apps.AppConfig.ready),
 > [example](http://chriskief.com/2014/02/28/django-1-7-signals-appconfig/)
 
-### ViewHook
+### FormHook
+
+Creating a hook-point:
+
+```python
+# main_app/formhooks.py
+
+from hooks.formhook import Hook
+
+MyFormHook = Hook()
+UserFormHook = Hook(providing_args=['user'])
+```
+
+Adding a hook-point to the main app view:
+
+```python
+# main_app/views.py
+
+from main_app import formhooks
+
+
+# Example 1
+def my_view(request):
+    if request.method == 'POST':
+        myform = MyForm(data=request.POST)
+        hook = formhooks.MyFormHook(data=request.POST)
+
+        if all([myform.is_valid(), hook.is_valid()]):  # Avoid short-circuit
+            myform.save()
+            hook.save()
+            redirect('/')
+    else:
+        myform = MyForm()
+        hook = formhooks.MyFormHook()
+
+    return response({'myform': myform, 'hook_form': hook}) #...
+
+
+# Example 2
+def user_profile_update(request):
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST, instance=request.user)
+
+        # Hook listeners will receive the user and populate the
+        # initial data (or instance if a FormModel is used) accordingly,
+        # or maybe even query the data base.
+        hook = formhooks.UserFormHook(user=request.user, data=request.POST)
+
+        if all([user_form.is_valid(), hook.is_valid()]):  # Avoid short-circuit
+            new_user = user_form.save()
+            hook.save(new_user=new_user)  # They may receive extra parameter when saving
+            redirect('/')
+    else:
+        user_form = MyForm(instance=request.user)
+        hook = formhooks.UserFormHook(user=request.user)
+
+    return response({'user_form': user_form, 'hook_form': hook}) #...
+```
+
+Displaying the forms:
+
+```html
+# main_app/templates/my_view.html
+
+{% extends "main_app/_base.html" %}
+
+{% block title %}My forms{% endblock %}
+
+{% block content %}
+    <h1 class="headline">My forms</h1>
+
+    <form action="." method="post">
+        {% csrf_token %}
+        {{ myform }}
+
+        {% for f in hook_form %}
+            {{ f }}
+        {% endfor %}
+
+        <input type="submit" value="Save" />
+    </form>
+{% endblock %}
+```
+
+Creating a hook-listener in a third-party app:
+
+> Hooks listeners are just regular django forms or model forms
+
+```python
+# third_party_app/forms.py
+
+from django import forms
+from third_party_app.models import MyUserExtension
+
+
+class MyUserExtensionForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ("gender", "age", "about")
+
+    def __init__(user=None, *args, **kwargs):
+        try:
+           instance = MyUserExtension.objects.get(user=user)
+        except MyUserExtension.DoesNotExist:
+           instance = None
+
+        kwargs['instance'] = instance
+        super(MyUserExtensionForm, self).__init__(*args, **kwargs)
+```
+
+Registering a hook-listener:
+
+```python
+# third_party_app/apps.py
+
+from django.apps import AppConfig
+
+
+class MyAppConfig(AppConfig):
+
+    name = 'myapp'
+    verbose_name = 'My App'
+
+    def ready(self):
+        from main_app.formhooks import MyFormHook, UserFormHook
+        from third_party_app.forms import MyForm, MyUserExtensionForm
+
+        MyFormHook.register(MyForm)
+        UserFormHook.register(MyUserExtensionForm)
+```
+
+### ~~ViewHook~~
 
 > Warning!
 >
