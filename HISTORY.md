@@ -1,3 +1,11 @@
+0.1.4
+==================
+
+* Drops Django 1.7 support (mostly because it does not supports Python 3.5)
+* Adds Python 3.5 support
+* New: FormHook
+* Deprecated: VieHook in favor of FormHook
+
 0.1.3
 ==================
 
