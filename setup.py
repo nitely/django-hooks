@@ -5,6 +5,7 @@ import os
 from setuptools import setup
 
 README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
+REQUIREMENTS = open(os.path.join(os.path.dirname(__file__), 'requirements.txt')).read()
 
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
@@ -23,6 +24,7 @@ setup(
     ],
     include_package_data=True,
     zip_safe=False,
+    install_requires=REQUIREMENTS,
     license='MIT License',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
