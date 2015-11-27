@@ -1,5 +1,3 @@
-.. _formhook:
-
 FormHook
 ========
 
@@ -81,7 +79,7 @@ Displaying the forms::
 
 Creating a hook-listener in a third-party app:
 
-| > Hooks listeners are just regular django forms or model forms
+.. Tip:: Hooks listeners are just regular django forms or model forms
 
 ::
 

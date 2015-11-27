@@ -1,16 +1,14 @@
-.. _signalhook:
-
 SignalHook
 ==========
 
-Best practices:
+.. Tip:: Best practices:
 
-* Always *document* the signals the app will send, include the parameters the receiver should handle.
-* Send signals from views, only.
-* Avoid sending signals from plugins.
-* Try to avoid signal-hell in general. It's better to be *explicit* and call the
-  functions that would've handle the signal otherwise. Of course, this won't be
-  possible when there are plugins involved.
+    * Always *document* the signals the app will send, include the parameters the receiver should handle.
+    * Send signals from views, only.
+    * Avoid sending signals from plugins.
+    * Try to avoid signal-hell in general. It's better to be *explicit* and call the
+      functions that would've handle the signal otherwise. Of course, this won't be
+      possible when there are plugins involved.
 
 Connecting a hook-listener::
 
@@ -30,4 +28,4 @@ Sending a signal::
     responses = signalhook.hook.send("my-signal", arg_one="hello", arg_two="world")
     responses = signalhook.hook.send("another-signal")
 
-| > ``SignalHook`` uses django signals under the hood, so you can do pretty much the same things.
+.. Tip:: ``SignalHook`` uses django signals under the hood, so you can do pretty much the same things.
