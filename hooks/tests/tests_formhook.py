@@ -122,7 +122,8 @@ class FormHookTest(TestCase):
         myhook = Hook()
         myhook.register(MyForm)
         forms = myhook()
+        form_instance = list(forms)[0]
         self.assertEqual(
             forms.save('foo', bar='bar'),
-            [(('foo',), {'bar': 'bar'}), ]
+            [(form_instance, (('foo',), {'bar': 'bar'})), ]
         )

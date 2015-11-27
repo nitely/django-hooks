@@ -10,23 +10,25 @@ __all__ = ['hook', ]
 
 class Hook(object):
     """
-    A dynamic-signal dispatcher.
+    A dynamic-signal dispatcher.\
+    Should be used through :py:data:`hook`
 
-    thread-safety: it's not thread safe, this may change
-    in the future if a RLock is added around _registry operations.
-    In the meanwhile, you should register/connect/disconnect
-    at import time (global scope) to ensure thread-safety,
-    models.py and urls.py are good places (django<=1.6)
-    or do it in the AppConfig.ready() method (django>=1.7).
+    thread-safety: it's not thread safe, this may change\
+    in the future if a RLock is added around _registry operations.\
+    In the meanwhile, you should register/connect/disconnect\
+    at import time (global scope) to ensure thread-safety,\
+    doing it in the AppConfig.ready() method is safe
     """
     def __init__(self):
         self._registry = {}
 
     def register(self, name):
         """
-        Registers a new hook. Not required (see connect method).
+        Register a new hook. Not required (see :py:func:`.connect` method)
 
-        @name: the hook name.
+        :param str name: The hook name
+        :return: Django signal
+        :rtype: :py:class:`django.dispatch.Signal`
         """
         signal = Signal(providing_args=['args', 'kwargs'])
         self._registry[name] = signal
@@ -34,12 +36,15 @@ class Hook(object):
 
     def connect(self, name, func, sender=None, dispatch_uid=None):
         """
-        Connects a function to a hook. Creates the hook-name if it does not exists.
+        Connects a function to a hook.\
+        Creates the hook (name) if it does not exists
 
-        @name: the hook name.
-        @func: a function reference, must return a string.
-        @sender: optional sender __class__ to which this func should respond. Default will match all.
-        @dispatch_uid: optional unique id, see django Signals for more info.
+        :param str name: The hook name
+        :param callable func: A function reference used as a callback
+        :param class sender: Optional sender __class__ to which the\
+        func should respond. Default will match all
+        :param str dispatch_uid: Optional unique id,\
+        see :py:class:`django.dispatch.Signal` for more info
         """
         try:
             signal = self._registry[name]
@@ -50,11 +55,12 @@ class Hook(object):
 
     def disconnect(self, name, func, dispatch_uid=None):
         """
-        Disconnects a function from a hook.
+        Disconnects a function from a hook
 
-        @name: the hook name.
-        @func: a function reference.
-        @dispatch_uid: optional unique id, see django Signals for more info.
+        :param str name: The hook name
+        :param callable func: A function reference registered previously
+        :param str dispatch_uid: optional unique id,\
+        see :py:class:`django.dispatch.Signal` for more info.
         """
         try:
             signal = self._registry[name]
@@ -65,11 +71,14 @@ class Hook(object):
 
     def send(self, name, sender=None, **kwargs):
         """
-        Sends the signal. Returns every function response
-        that was hooked to hook-name as a list: [(func, response), ].
+        Sends the signal. Return every function response\
+        that was hooked to hook-name as a list: [(func, response), ]
 
-        @name: the hook name.
-        @sender: optional sender __class__, see connect method.
+        :param str name: The hook name
+        :param class sender: Optional sender __class__ to which\
+        registered callback should match (see :py:func:`.connect` method)
+        :return: Signal responses as a sequence of tuples (func, response)
+        :rtype: list
         """
         try:
             signal = self._registry[name]

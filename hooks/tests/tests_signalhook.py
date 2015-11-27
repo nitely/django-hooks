@@ -38,10 +38,6 @@ class SignalHookTest(TestCase):
     def tearDown(self):
         hook._registry.clear()
 
-    def test_register(self):
-        signal = hook.register("foo-hook")
-        self.assertIsInstance(signal, Signal)
-
     def test_connect(self):
         def func():
             pass
