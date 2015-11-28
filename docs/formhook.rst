@@ -20,18 +20,15 @@ Adding a hook-point to the main app view::
     # Example 1
     def my_view(request):
         if request.method == 'POST':
-            myform = MyForm(data=request.POST)
-            hook = formhooks.MyFormHook(data=request.POST)
+            form_hook = formhooks.MyFormHook(data=request.POST)
 
-            if all([myform.is_valid(), hook.is_valid()]):  # Avoid short-circuit
-                myform.save()
-                hook.save()
+            if form_hook.is_valid():
+                form_hook.save()
                 redirect('/')
         else:
-            myform = MyForm()
-            hook = formhooks.MyFormHook()
+            form_hook = formhooks.MyFormHook()
 
-        return response({'myform': myform, 'hook_form': hook}) #...
+        return response('my_view.html', {'form_hook': form_hook})
 
 
     # Example 2
@@ -42,17 +39,17 @@ Adding a hook-point to the main app view::
             # Hook listeners will receive the user and populate the
             # initial data (or instance if a ModelForm is used) accordingly,
             # or maybe even query the data base.
-            hook = formhooks.UserFormHook(user=request.user, data=request.POST)
+            user_form_hook = formhooks.UserFormHook(user=request.user, data=request.POST)
 
-            if all([user_form.is_valid(), hook.is_valid()]):  # Avoid short-circuit
+            if all([user_form.is_valid(), user_form_hook.is_valid()]):  # Avoid short-circuit
                 new_user = user_form.save()
-                hook.save(new_user=new_user)  # They may receive extra parameter when saving
+                user_form_hook.save(new_user=new_user)  # They may receive extra parameter when saving
                 redirect('/')
         else:
             user_form = MyForm(instance=request.user)
-            hook = formhooks.UserFormHook(user=request.user)
+            user_form_hook = formhooks.UserFormHook(user=request.user)
 
-        return response({'user_form': user_form, 'hook_form': hook}) #...
+        return response('user_profile_update.html', {'user_form': user_form, 'user_form_hook': user_form_hook})
 
 Displaying the forms::
 
@@ -67,9 +64,8 @@ Displaying the forms::
 
         <form action="." method="post">
             {% csrf_token %}
-            {{ myform }}
 
-            {% for f in hook_form %}
+            {% for f in form_hook %}
                 {{ f }}
             {% endfor %}
 
@@ -89,6 +85,13 @@ Creating a hook-listener in a third-party app:
     from third_party_app.models import MyUserExtension
 
 
+    # Example 1
+    class MyRegularForm(forms.Form):
+        """"""
+        # ...
+
+
+    # Example 2
     class MyUserExtensionForm(forms.ModelForm):
 
         class Meta:
@@ -108,11 +111,6 @@ Creating a hook-listener in a third-party app:
             self.instance.user = new_user
             super(MyUserExtensionForm, self).save(*args, **kwargs)
 
-
-    class MyRegularForm(forms.Form):
-        """"""
-        # ...
-
 Registering a hook-listener::
 
     # third_party_app/apps.py
@@ -120,6 +118,7 @@ Registering a hook-listener::
     from django.apps import AppConfig
 
 
+    # Example
     class MyAppConfig(AppConfig):
 
         name = 'myapp'

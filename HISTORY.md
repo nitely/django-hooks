@@ -2,7 +2,7 @@
 -----
 
 * New: Proper docs
-* Improvement: `FormHook.save()` returns a list of (form, save_result) instead of just the results
+* Improvement: `FormHook.save()` returns a list of (form, result) instead of just the results
 
 0.1.4
 -----
