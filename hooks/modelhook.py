@@ -41,7 +41,10 @@ class ModelHook(object):
         :return: A new model inheriting from\
         all registered plugins
         """
-        class Plugins(type):
+        class DummyBase(object):
+            """"""
+
+        class Plugins(DummyBase):
             class Meta:
                 abstract = True
 
