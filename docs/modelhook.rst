@@ -33,7 +33,7 @@ So, this is important because it's exactly how ``ModelHooks`` works.
 Except the inheritance part is dynamic, the concrete model inherits
 all of its plugins.
 
-If didn't know this was possible, don't go rewrite your models this way,
+If you didn't know this was possible, don't go rewrite your models this way,
 multiple inheritance tends to go out of hands and adds complexity
 (as in code really hard to follow) pretty quickly. If you can avoid it, do it.
 
@@ -76,6 +76,9 @@ Registering a plugin (AKA hook-listener in other parts of the docs)::
             abstract = True
 
     MyModelHook.register(MyPlugin)
+
+.. Tip:: Always prefix your plugin fields and custom methods
+         with the name of the plugin to avoid clashes
 
 Installing the plugin::
 
