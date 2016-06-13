@@ -45,6 +45,9 @@ class ModelHook(object):
         class Meta:
             abstract = True
 
+        # Convert to whatever str is
+        # to make it compatible with
+        # py2 and py3
         return type(
             str('Plugins'),
             tuple(self._registry) + (models.Model, ),  # bases
