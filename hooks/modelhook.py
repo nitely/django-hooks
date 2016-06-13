@@ -56,8 +56,8 @@ class ModelHook(object):
     def fields_for(self, form_name):
         return [
             field
-            for model in self._registry
-            for field in getattr(model, form_name, ())]
+            for model_class in self._registry
+            for field in getattr(model_class, form_name, ())]
 
     def register(self, model_class):
         _is_abstract_model_check(model_class)
