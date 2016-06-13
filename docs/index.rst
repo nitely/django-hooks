@@ -10,10 +10,9 @@ A modular plugin system for django apps.
 
 There are 4 kinds of hooks:
 
-* TemplateHook: Third-party apps will be able to insert their own code (text/html) into a template.
+* TemplateHook: Third-party apps will be able to add data in a template.
 * ModelHook: Third-party apps will be able to add fields and methods to a model.
-* FormHook: Third-party apps will be able to insert Forms in a view.
-* ViewHook: This is deprecated in favor of FormHook
+* FormHook: Third-party apps will be able to add forms to a view.
 * SignalHook: Connect or emit a signal by its name/id.
   This is the same as Django signals except that they don't need to be pre-defined.
 
