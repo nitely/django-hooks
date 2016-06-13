@@ -53,6 +53,12 @@ class ModelHook(object):
             tuple(self._registry) + (models.Model, ),  # bases
             dict(Plugins.__dict__))
 
+    def fields_for(self, form_name):
+        return [
+            field
+            for model in self._registry
+            for field in getattr(model, form_name, ())]
+
     def register(self, model_class):
         _is_abstract_model_check(model_class)
 
