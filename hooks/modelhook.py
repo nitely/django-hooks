@@ -41,17 +41,15 @@ class ModelHook(object):
         :return: A new model inheriting from\
         all registered plugins
         """
-        class DummyBase(object):
-            """"""
-
-        class Plugins(DummyBase):
-            class Meta:
-                abstract = True
+        class Meta:
+            abstract = True
 
         return type(
-            Plugins.__name__,
+            'Plugins',
             tuple(self._registry) + (models.Model, ),  # bases
-            dict(Plugins.__dict__))
+            {'__module__': self.__module__,
+             '__doc__': None,
+             'Meta': Meta})
 
     def fields_for(self, form_name):
         return [
