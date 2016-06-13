@@ -30,8 +30,9 @@ class ModelHook(object):
     @property
     def plugins(self):
         """
-        Create a new class dynamically,\
-        inheriting all registered plugins.
+        Create a new abstract model class\
+        dynamically, inheriting all registered\
+        plugins.
 
         This is similar to::
 
@@ -45,11 +46,11 @@ class ModelHook(object):
         class Meta:
             abstract = True
 
-        # Convert to whatever str is
-        # to make it compatible with
-        # py2 and py3
+        # Convert strings to whatever
+        # str is to make it compatible
+        # with py2 and py3
         return type(
-            str('Plugins'),
+            str('PluginsAbstractModel'),
             tuple(self._registry) + (models.Model, ),  # bases
             {
                 str('__module__'): self.__module__,
