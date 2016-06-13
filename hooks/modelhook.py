@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import logging
 
 from django.db import models
+from django.utils import six
 
 
 logger = logging.getLogger('django')
@@ -45,11 +46,12 @@ class ModelHook(object):
             abstract = True
 
         return type(
-            'Plugins',
+            str('Plugins'),
             tuple(self._registry) + (models.Model, ),  # bases
-            {'__module__': self.__module__,
-             '__doc__': None,
-             'Meta': Meta})
+            {
+                str('__module__'): self.__module__,
+                str('__doc__'): None,
+                str('Meta'): Meta})
 
     def fields_for(self, form_name):
         return [
